@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const { Tag, Product } = require("../../models");
 
+// Error handling function
 const handleServerError = (res, error) => {
   console.error(error);
   res.status(500).json({ error: "Internal server error" });
 };
 
+// Route to get all tags with associated Product data
 router.get("/", async (req, res) => {
   try {
     const tags = await Tag.findAll({
@@ -17,6 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Route to get a specific tag by ID with associated Product data
 router.get("/:id", async (req, res) => {
   try {
     const tagId = req.params.id;
@@ -34,6 +37,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Route to create a new tag
 router.post("/", async (req, res) => {
   try {
     const { tag_name } = req.body;
@@ -44,6 +48,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Route to update a tag's name by its ID
 router.put("/:id", async (req, res) => {
   try {
     const tagId = req.params.id;
@@ -64,6 +69,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Route to delete a tag by its ID
 router.delete("/:id", async (req, res) => {
   try {
     const tagId = req.params.id;

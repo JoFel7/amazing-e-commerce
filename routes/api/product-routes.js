@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
+// Error handling function
 const handleServerError = (res, error) => {
   console.error(error);
   res.status(500).json({ error: "Internal server error" });
 };
 
+// Route to get all products with associated Category and Tag data
 router.get("/", async (req, res) => {
   try {
     const products = await Product.findAll({
@@ -17,6 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Route to get a specific product by ID with associated Category and Tag data
 router.get("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -34,6 +37,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Route to create a new product
 router.post("/", async (req, res) => {
   try {
     const { name, price, description, tagIds } = req.body;
@@ -59,6 +63,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Route to update a specific product by ID
 router.put("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -80,6 +85,7 @@ router.put("/:id", async (req, res) => {
       const productTags = await ProductTag.findAll({
         where: { product_id: productId },
       });
+
       const productTagIds = productTags.map(({ tag_id }) => tag_id);
       const newProductTags = tagIds
         .filter((tag_id) => !productTagIds.includes(tag_id))
@@ -87,20 +93,24 @@ router.put("/:id", async (req, res) => {
           product_id: productId,
           tag_id,
         }));
+
       const productTagsToRemove = productTags
         .filter(({ tag_id }) => !tagIds.includes(tag_id))
         .map(({ id }) => id);
+
       await Promise.all([
         ProductTag.destroy({ where: { id: productTagsToRemove } }),
         ProductTag.bulkCreate(newProductTags),
       ]);
     }
+
     res.json(product);
   } catch (error) {
     handleServerError(res, error);
   }
 });
 
+// Route to delete a specific product by ID
 router.delete("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
