@@ -40,10 +40,11 @@ router.get("/:id", async (req, res) => {
 // Route to create a new product
 router.post("/", async (req, res) => {
   try {
-    const { name, price, description, tagIds } = req.body;
-
+    const { product_name, price, description, tagIds } = req.body;
+    console.log('Name:', product_name); // Correct variable name
+    
     const newProduct = await Product.create({
-      product_name: name,
+      product_name,  // Use the correct variable name
       price,
       description,
     });
